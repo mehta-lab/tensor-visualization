@@ -1,13 +1,12 @@
 # Parameters
-initial_num_points = 1000
-final_points = 500
+initial_num_points = 5000
+final_points = 4000
 alpha = 1000.0
-max_time = 20.0
-min_time = 10.0
-num_iterations = 40
+max_time = 30.0
+min_time = 5.0
+num_iterations = 70
 boundary = 30
-c_drag = 10.0
-image_size = 100
+c_drag = 60.0
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,6 +29,8 @@ from scipy import interpolate
 import cv2
 import multiprocessing as mp
 
+%matplotlib inline
+
 def nanRobustBlur(I, dim):
     V=I.copy()
     V[I!=I]=0
@@ -42,8 +43,6 @@ def nanRobustBlur(I, dim):
 
 anisotropy = cv2.imread('2d_data/img_retardance3D_t000_p000_z044.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/img_azimuth_t000_p000_z044.tif', -1).astype('float32')
-anisotropy = anisotropy[100:200, 100:200]
-orientation = orientation[100:200, 100:200]
 orientation = orientation / 18000*np.pi
 anisotropy = anisotropy / 10000
 
@@ -271,7 +270,7 @@ map_points = form_dict(curr_points)
 slope = (max_time - min_time)/(1 - num_iterations)
 constant = (num_iterations*max_time - min_time)/(num_iterations - 1)
 start_algo = time.clock()
-pool = mp.Pool(mp.cpu_count())
+pool = mp.Pool(mp.cpu_count() - 1)
 
 for k in range(num_iterations):
     start_iteration = time.clock()
@@ -329,4 +328,3 @@ final_positions = np.array(final_positions)
 final_positions = np.around(final_positions, decimals=0)
 
 np.save('final_positions', final_positions)
-

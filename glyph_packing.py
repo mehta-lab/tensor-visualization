@@ -1,12 +1,12 @@
 # Parameters
-initial_num_points = 7000
-final_points = 5000
-alpha = 2000.0
-max_time = 80.0
-min_time = 5.0
+initial_num_points = 3000
+final_points = 2500
+alpha = 1.0
+max_time = 40.0
+min_time = 20.0
 num_iterations = 100
 boundary = 30
-c_drag = 90.0
+c_drag = 20.0
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -327,4 +327,4 @@ print("Total time taken: ", end_algo - start_algo)
 final_positions = np.array(final_positions)
 final_positions = np.around(final_positions, decimals=0)
 
-np.save('final_positions_20', final_positions)
+np.save('final_positions_1', final_positions)

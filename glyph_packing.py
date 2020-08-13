@@ -1,12 +1,13 @@
 # Parameters
-initial_num_points = 8000
-final_points = 5000
-alpha = 1.0
+initial_num_points = 11000
+final_points = 10000
+alpha = 3.0
 max_time = 80.0
 min_time = 5.0
 num_iterations = 200
-boundary = 30
-c_drag = 30.0
+boundary = 90
+c_drag = 1.0
+num_cores = 128
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -41,8 +42,8 @@ def nanRobustBlur(I, dim):
 
 anisotropy = cv2.imread('2d_data/img_retardance3D_t000_p000_z044.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/img_azimuth_t000_p000_z044.tif', -1).astype('float32')
-anisotropy = anisotropy[100:200, 100:200]
-orientation = orientation[100:200, 100:200]
+# anisotropy = anisotropy[100:200, 100:200]
+# orientation = orientation[100:200, 100:200]
 orientation = orientation / 18000*np.pi
 anisotropy = anisotropy / 10000
 
@@ -270,7 +271,7 @@ map_points = form_dict(curr_points)
 slope = (max_time - min_time)/(1 - num_iterations)
 constant = (num_iterations*max_time - min_time)/(num_iterations - 1)
 start_algo = time.clock()
-pool = mp.Pool(mp.cpu_count())
+pool = mp.Pool(num_cores)
 
 for k in range(num_iterations):
     start_iteration = time.clock()
@@ -281,7 +282,7 @@ for k in range(num_iterations):
     avg_total_points = 0
     time_integrate = slope*(k+1) + constant
     
-    if k < 8:
+    if k < -1:
         processes = [pool.apply_async(solve_particle_path, args=(i, curr_points, map_points, time_integrate, True)) for i in range(len(curr_points))]
     else:
         processes = [pool.apply_async(solve_particle_path, args=(i, curr_points, map_points, time_integrate, False)) for i in range(len(curr_points))] 
@@ -306,13 +307,14 @@ for k in range(num_iterations):
             else:
                 new_map_points[new_bin_coord] = [(sol[-1, 0], sol[-1, 1])]
     
-    if k%4 == 0: 
+    if k%1 == 0: 
         print("Distances moved by particle:", total_dist/num_particles)
         print("Number of particles:", num_particles)
         print("Number of particles for force:", avg_total_points/num_particles)
         end_iteration = time.clock()
         print("Time taken for iteration: ", end_iteration - start_iteration)
         print("")
+    break
     
     curr_points = final_positions
     map_points = new_map_points
@@ -327,4 +329,4 @@ print("Total time taken: ", end_algo - start_algo)
 final_positions = np.array(final_positions)
 final_positions = np.around(final_positions, decimals=0)
 
-np.save('fp_glpyh_packing', final_positions)
+np.save('fp_glpyh_packing_1', final_positions)

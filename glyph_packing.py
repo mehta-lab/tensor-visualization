@@ -1,12 +1,12 @@
 # Parameters
-initial_num_points = 8000
-final_points = 5000
-alpha = 1.0
+initial_num_points = 20000
+final_points = 10000
+alpha = 5.0
 max_time = 80.0
 min_time = 5.0
 num_iterations = 200
-boundary = 30
-c_drag = 30.0
+boundary = 100
+c_drag = 40.0
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -41,8 +41,8 @@ def nanRobustBlur(I, dim):
 
 anisotropy = cv2.imread('2d_data/img_retardance3D_t000_p000_z044.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/img_azimuth_t000_p000_z044.tif', -1).astype('float32')
-anisotropy = anisotropy[100:200, 100:200]
-orientation = orientation[100:200, 100:200]
+# anisotropy = anisotropy[100:200, 100:200]
+# orientation = orientation[100:200, 100:200]
 orientation = orientation / 18000*np.pi
 anisotropy = anisotropy / 10000
 
@@ -327,4 +327,4 @@ print("Total time taken: ", end_algo - start_algo)
 final_positions = np.array(final_positions)
 final_positions = np.around(final_positions, decimals=0)
 
-np.save('fp_glpyh_packing', final_positions)
+np.save('final_positions_20', final_positions)

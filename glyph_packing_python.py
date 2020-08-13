@@ -1,15 +1,4 @@
 # Parameters
-<<<<<<< HEAD:glyph_packing.py
-initial_num_points = 11000
-final_points = 10000
-alpha = 3.0
-max_time = 80.0
-min_time = 5.0
-num_iterations = 200
-boundary = 90
-c_drag = 1.0
-num_cores = 128
-=======
 initial_num_points = 8000
 final_points = 7000
 alpha = 1.0
@@ -21,7 +10,6 @@ c_drag = 1.0
 image_size = 100
 num_cores = 1
 gamma = 0.5
->>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -59,11 +47,6 @@ def nanRobustBlur(I, dim):
 
 anisotropy = cv2.imread('2d_data/img_retardance3D_t000_p000_z044.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/img_azimuth_t000_p000_z044.tif', -1).astype('float32')
-<<<<<<< HEAD:glyph_packing.py
-# anisotropy = anisotropy[100:200, 100:200]
-# orientation = orientation[100:200, 100:200]
-=======
->>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
 orientation = orientation / 18000*np.pi
 anisotropy = anisotropy / 10000
 
@@ -297,10 +280,6 @@ def solve_particle_path_multiple(index_start, initial_pos, map_points, time_inte
 map_points = form_dict(curr_points)
 
 slope = (max_time - min_time)/(1 - num_iterations)
-<<<<<<< HEAD:glyph_packing.py
-constant = (num_iterations*max_time - min_time)/(num_iterations - 1)
-start_algo = time.clock()
-=======
 constant = (num_iterations*max_time - min_time)/(num_iterations - 1)      
 >>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
 pool = mp.Pool(num_cores)

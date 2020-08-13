@@ -1,4 +1,5 @@
 # Parameters
+<<<<<<< HEAD:glyph_packing.py
 initial_num_points = 11000
 final_points = 10000
 alpha = 3.0
@@ -8,6 +9,19 @@ num_iterations = 200
 boundary = 90
 c_drag = 1.0
 num_cores = 128
+=======
+initial_num_points = 8000
+final_points = 7000
+alpha = 1.0
+max_time = 30.0
+min_time = 5.0
+num_iterations = 70
+boundary = 30
+c_drag = 1.0
+image_size = 100
+num_cores = 1
+gamma = 0.5
+>>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,6 +43,9 @@ from itertools import cycle
 from scipy import interpolate
 import cv2
 import multiprocessing as mp
+from numba import jit, prange
+
+%matplotlib inline
 
 def nanRobustBlur(I, dim):
     V=I.copy()
@@ -42,8 +59,11 @@ def nanRobustBlur(I, dim):
 
 anisotropy = cv2.imread('2d_data/img_retardance3D_t000_p000_z044.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/img_azimuth_t000_p000_z044.tif', -1).astype('float32')
+<<<<<<< HEAD:glyph_packing.py
 # anisotropy = anisotropy[100:200, 100:200]
 # orientation = orientation[100:200, 100:200]
+=======
+>>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
 orientation = orientation / 18000*np.pi
 anisotropy = anisotropy / 10000
 
@@ -124,7 +144,6 @@ def return_D_inverse(pos_a, pos_b):
 
     return D_inverse_ab
 
-gamma = 0.5
 def force_function_list(r):
     
     mask_1 = np.logical_and(r < 1, r > 0)
@@ -132,8 +151,6 @@ def force_function_list(r):
     mask_3 = r > 1+gamma
     
     return mask_1*(r-1) + mask_2*(((r-1)*(1+gamma-r)**2)/gamma**2) + mask_3*(0)
-
-from numba import jit, prange
 
 @jit(nopython=True)
 def invert_matrix(matrices):
@@ -258,21 +275,37 @@ def diff_equation(y, t, c_drag, total_force):
     dydt = [r0, r1, total_force[0] - c_drag*r0, total_force[1] - c_drag*r1]
     return dydt
 
-def solve_particle_path(index, initial_pos, map_points, time_integrate, approx=True):
-    y0 = [initial_pos[index][0], initial_pos[index][1], 0.0, 0.0]  
-    t = np.linspace(0, time_integrate, 10) 
-    tf, tot_points = total_force_on_point(index, initial_pos, map_points, approx)
-    sol = odeint(diff_equation, y0, t, args=(c_drag, tf))
+def solve_particle_path_multiple(index_start, initial_pos, map_points, time_integrate, num_points_per_core, approx=True):
+    sol_list = []
+    tot_points_list = []
     
-    return sol, tot_points
+    if index_start + num_points_per_core < len(initial_pos):
+        limit = index_start + num_points_per_core
+    else:
+        limit = len(initial_pos)
+
+    for index in range(index_start, limit):
+        y0 = [initial_pos[index][0], initial_pos[index][1], 0.0, 0.0]  
+        t = np.linspace(0, time_integrate, 10) 
+        tf, tot_points = total_force_on_point(index, initial_pos, map_points, approx)
+        sol = odeint(diff_equation, y0, t, args=(c_drag, tf))
+        sol_list.append(sol)
+        tot_points_list.append(tot_points)
+        
+    return sol_list, tot_points_list
 
 map_points = form_dict(curr_points)
 
 slope = (max_time - min_time)/(1 - num_iterations)
+<<<<<<< HEAD:glyph_packing.py
 constant = (num_iterations*max_time - min_time)/(num_iterations - 1)
 start_algo = time.clock()
+=======
+constant = (num_iterations*max_time - min_time)/(num_iterations - 1)      
+>>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
 pool = mp.Pool(num_cores)
 
+start_algo = time.time()
 for k in range(num_iterations):
     start_iteration = time.clock()
     final_positions = []
@@ -282,30 +315,42 @@ for k in range(num_iterations):
     avg_total_points = 0
     time_integrate = slope*(k+1) + constant
     
+<<<<<<< HEAD:glyph_packing.py
     if k < -1:
         processes = [pool.apply_async(solve_particle_path, args=(i, curr_points, map_points, time_integrate, True)) for i in range(len(curr_points))]
+=======
+    total_points = len(curr_points)
+    num_points_per_core = int(total_points/num_cores)
+    
+    if k < 8:
+        processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, True)) for i in range(0, total_points, num_points_per_core)]
+>>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
     else:
-        processes = [pool.apply_async(solve_particle_path, args=(i, curr_points, map_points, time_integrate, False)) for i in range(len(curr_points))] 
-
+        processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, False)) for i in range(0, total_points, num_points_per_core)]
+        
     results = [process.get() for process in processes]
 
-    for i in range(len(curr_points)):   
-        sol = results[i][0]
-        tot_points = results[i][1]
+    for i in range(len(results)):
+        sol_list = results[i][0]
+        tot_points_list = results[i][1]
         
-        if sol[-1, 0] >= -boundary and sol[-1, 0] <= anisotropy.shape[0] + boundary and \
-           sol[-1, 1] >= -boundary and sol[-1, 1] <= anisotropy.shape[1] + boundary:
-            final_positions.append((sol[-1, 0], sol[-1, 1]))
-            num_particles += 1
-            avg_total_points += tot_points
-            total_dist += LA.norm(np.array([sol[-1, 0], sol[-1, 1]]) - np.array([sol[0, 0], sol[0, 1]]))     
+        for j in range(len(sol_list)):
+            sol = sol_list[j]
+            tot_points = tot_points_list[j]
 
-            new_bin_coord = bin_coords((sol[-1, 0], sol[-1, 1]))
+            if sol[-1, 0] >= -boundary and sol[-1, 0] <= anisotropy.shape[0] + boundary and \
+               sol[-1, 1] >= -boundary and sol[-1, 1] <= anisotropy.shape[1] + boundary:
+                final_positions.append((sol[-1, 0], sol[-1, 1]))
+                num_particles += 1
+                avg_total_points += tot_points
+                total_dist += LA.norm(np.array([sol[-1, 0], sol[-1, 1]]) - np.array([sol[0, 0], sol[0, 1]]))     
 
-            if new_bin_coord in new_map_points.keys():
-                new_map_points[new_bin_coord].append((sol[-1, 0], sol[-1, 1]))
-            else:
-                new_map_points[new_bin_coord] = [(sol[-1, 0], sol[-1, 1])]
+                new_bin_coord = bin_coords((sol[-1, 0], sol[-1, 1]))
+
+                if new_bin_coord in new_map_points.keys():
+                    new_map_points[new_bin_coord].append((sol[-1, 0], sol[-1, 1]))
+                else:
+                    new_map_points[new_bin_coord] = [(sol[-1, 0], sol[-1, 1])]
     
     if k%1 == 0: 
         print("Distances moved by particle:", total_dist/num_particles)
@@ -322,11 +367,15 @@ for k in range(num_iterations):
     if total_dist/num_particles < 0.3:
         break
 
-end_algo = time.clock()
+end_algo = time.time()
 
 print("Total time taken: ", end_algo - start_algo)
 
 final_positions = np.array(final_positions)
 final_positions = np.around(final_positions, decimals=0)
 
+<<<<<<< HEAD:glyph_packing.py
 np.save('fp_glpyh_packing_1', final_positions)
+=======
+np.save('fp_new', final_positions)
+>>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py

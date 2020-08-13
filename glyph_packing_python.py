@@ -1,14 +1,13 @@
 # Parameters
-initial_num_points = 8000
-final_points = 7000
-alpha = 1.0
-max_time = 30.0
+initial_num_points = 12000
+final_points = 10000
+alpha = 3.0
+max_time = 90.0
 min_time = 5.0
-num_iterations = 70
-boundary = 30
-c_drag = 1.0
-image_size = 100
-num_cores = 1
+num_iterations = 400
+boundary = 40
+c_drag = 40.0
+num_cores = 128
 gamma = 0.5
 
 import numpy as np
@@ -281,7 +280,6 @@ map_points = form_dict(curr_points)
 
 slope = (max_time - min_time)/(1 - num_iterations)
 constant = (num_iterations*max_time - min_time)/(num_iterations - 1)      
->>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
 pool = mp.Pool(num_cores)
 
 start_algo = time.time()
@@ -294,16 +292,11 @@ for k in range(num_iterations):
     avg_total_points = 0
     time_integrate = slope*(k+1) + constant
     
-<<<<<<< HEAD:glyph_packing.py
-    if k < -1:
-        processes = [pool.apply_async(solve_particle_path, args=(i, curr_points, map_points, time_integrate, True)) for i in range(len(curr_points))]
-=======
     total_points = len(curr_points)
     num_points_per_core = int(total_points/num_cores)
     
     if k < 8:
         processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, True)) for i in range(0, total_points, num_points_per_core)]
->>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py
     else:
         processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, False)) for i in range(0, total_points, num_points_per_core)]
         
@@ -331,14 +324,13 @@ for k in range(num_iterations):
                 else:
                     new_map_points[new_bin_coord] = [(sol[-1, 0], sol[-1, 1])]
     
-    if k%1 == 0: 
+    if k%4 == 0: 
         print("Distances moved by particle:", total_dist/num_particles)
         print("Number of particles:", num_particles)
         print("Number of particles for force:", avg_total_points/num_particles)
         end_iteration = time.clock()
         print("Time taken for iteration: ", end_iteration - start_iteration)
         print("")
-    break
     
     curr_points = final_positions
     map_points = new_map_points
@@ -353,8 +345,4 @@ print("Total time taken: ", end_algo - start_algo)
 final_positions = np.array(final_positions)
 final_positions = np.around(final_positions, decimals=0)
 
-<<<<<<< HEAD:glyph_packing.py
-np.save('fp_glpyh_packing_1', final_positions)
-=======
 np.save('fp_new', final_positions)
->>>>>>> 3af03bd74e1742d32b2f767c20c77c53fa41cb82:glyph_packing_python.py

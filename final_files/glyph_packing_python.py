@@ -1,18 +1,18 @@
 # Parameters
-initial_num_points = 12000
-final_points = 10000
-alpha = 3.0
+initial_num_points = 50000
+final_num_points = 40000
+alpha = 1.0
 max_time = 90.0
 min_time = 5.0
 num_iterations = 400
-boundary = 40
-c_drag = 40.0
-num_cores = 128
+boundary = 50
+c_drag = 30.0
+num_cores = 32
 gamma = 0.5
+dataset = 'u2'
 
 import numpy as np
 import matplotlib.pyplot as plt
-
 import tifffile as tf
 import os
 import numpy as np
@@ -31,8 +31,7 @@ from scipy import interpolate
 import cv2
 import multiprocessing as mp
 from numba import jit, prange
-
-%matplotlib inline
+from skimage.transform import rescale
 
 def nanRobustBlur(I, dim):
     V=I.copy()
@@ -42,12 +41,19 @@ def nanRobustBlur(I, dim):
     W[I!=I]=0
     WW=cv2.blur(W,dim)    
     Z=VV/WW
-    return Z 
+    return Z
 
-anisotropy = cv2.imread('2d_data/img_retardance3D_t000_p000_z044.tif', -1).astype('float32')
-orientation = cv2.imread('2d_data/img_azimuth_t000_p000_z044.tif', -1).astype('float32')
+anisotropy = cv2.imread('2d_data/' + dataset + '/retardance.tif', -1).astype('float32')
+orientation = cv2.imread('2d_data/' + dataset + '/azimuth.tif', -1).astype('float32')
+anisotropy = rescale(anisotropy, 0.5, anti_aliasing=True)
+orientation = rescale(orientation, 0.5, anti_aliasing=True)
+anisotropy = anisotropy / 65535*10
 orientation = orientation / 18000*np.pi
-anisotropy = anisotropy / 10000
+
+if dataset == 'u2':
+    USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
+    VSmooth = VSmooth*-1
+    orientation = np.arctan2(VSmooth, USmooth)
 
 def return_smooth(orientation, anisotropy):
     U, V =  anisotropy*np.cos(2 * orientation), anisotropy*np.sin(2 * orientation)
@@ -193,7 +199,7 @@ random_points = list(zip(random_rows, random_columns))
 det_D_list = [np.linalg.det(return_D_interp(pos)) for pos in random_points]
 max_det = max(det_D_list)
 det_D_list = [x/max_det for x in det_D_list]
-points_rejected = np.random.choice(len(random_points), initial_num_points - final_points, det_D_list)
+points_rejected = np.random.choice(len(random_points), initial_num_points - final_num_points, det_D_list)
 final_points = [random_points[i] for i in range(len(random_points)) if i not in points_rejected]
 
 eig_D = [max(np.linalg.eig(return_D_interp(pos))[0]) for pos in random_points]
@@ -345,4 +351,6 @@ print("Total time taken: ", end_algo - start_algo)
 final_positions = np.array(final_positions)
 final_positions = np.around(final_positions, decimals=0)
 
-np.save('fp_new', final_positions)
+np.save('fp_' + dataset + '_alpha_' + str(alpha) + '_numpoints_' + str(final_num_points) + '_drag_' + str(c_drag), final_positions)
+
+

@@ -1,5 +1,5 @@
 # Parameters
-alpha = 2.0
+alpha = 1.0
 dataset = 'u2'
 positions_file = 'fp_u2_alpha_3.0_numpoints_40000_drag_30.0.npy'
 

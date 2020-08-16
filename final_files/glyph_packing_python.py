@@ -1,7 +1,7 @@
 # Parameters
 initial_num_points = 50000
 final_num_points = 40000
-alpha = 1.0
+alpha = 3.0
 max_time = 90.0
 min_time = 5.0
 num_iterations = 400

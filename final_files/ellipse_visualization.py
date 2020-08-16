@@ -1,7 +1,7 @@
 # Parameters
-alpha = 0.9
+alpha = 2.0
 dataset = 'u2'
-positions_file = 'fp_u2_alpha_1.0_numpoints_40000_drag_30.0.npy'
+positions_file = 'fp_u2_alpha_3.0_numpoints_40000_drag_30.0.npy'
 
 import cv2
 from matplotlib.patches import Ellipse
@@ -35,8 +35,8 @@ for i in range(len(final_positions)):
 major_axis_len = []
 minor_axis_len = []
 orientation_list = []
-scale_ellipse_major = alpha*1.1
-scale_ellipse_minor = alpha*0.9
+scale_ellipse_major = alpha*1.2
+scale_ellipse_minor = alpha*0.8
 
 for p in within_boundary_pos:
     orientation_list.append(orientation[p[0], p[1]])

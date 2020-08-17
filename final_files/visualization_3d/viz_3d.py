@@ -38,10 +38,9 @@ line_th = np.linspace(0,np.pi,spaces_th)
 iwidth_az = line_az[1] - line_az[0]
 iwidth_th = line_th[1] - line_th[0]
 
-def visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.2, z_stack=96,
+def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.2, z_stack=96,
                      spacing_xy=12, spacing_z=10, radius_scale=1.0, height_scale=10, colormap=my_colormap, neg_retardance=True, denoise=True):
     N_z = z_stack
-
     ret = []
     azimuth = []
     theta = []
@@ -143,17 +142,23 @@ def visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_
     plotter.camera_position = cpos
     plotter.show(screenshot='viz_3d_denoised.png')
 
-ret_path = '3d_dataset/retardance3D/*'
-azimuth_path = '3d_dataset/azimuth/*'
-theta_path = '3d_dataset/theta/*'
+if dataset == 'kaza':
+    ret_path = '3d_dataset/retardance3D/*'
+    azimuth_path = '3d_dataset/azimuth/*'
+    theta_path = '3d_dataset/theta/*'
 
-ret_files = sorted(glob.glob(ret_path))
-azimuth_files = sorted(glob.glob(azimuth_path))
-theta_files = sorted(glob.glob(theta_path))
+    ret_files = sorted(glob.glob(ret_path))
+    azimuth_files = sorted(glob.glob(azimuth_path))
+    theta_files = sorted(glob.glob(theta_path))
+    
+if dataset == 'mouse':
+    ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_retardance2D_t000_p000_z000.tif'
+    azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_azimuth_t000_p000_z000.tif'
+    theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_theta_t000_p000_z000.tif'
 
-ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_retardance2D_t000_p000_z000.tif'
-azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_azimuth_t000_p000_z000.tif'
-theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_theta_t000_p000_z000.tif'
+    ret_files = [ret_path]
+    azimuth_files = [azimuth_path]
+    theta_files = [theta_path]
 
-visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.2, z_stack=96,
+visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.2, z_stack=96,
                  spacing_xy=8, spacing_z=4, radius_scale=0.1, height_scale=1.2, colormap=my_colormap, neg_retardance=False, denoise=True)

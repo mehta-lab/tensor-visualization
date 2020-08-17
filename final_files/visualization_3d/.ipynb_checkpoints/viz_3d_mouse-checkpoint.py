@@ -137,7 +137,7 @@ def visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_
     point_cloud = pv.PolyData(points)
     point_cloud['vectors'] = directions
     point_cloud['values'] = scalars
-    arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale))
+    arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
     
     plotter = pv.Plotter(off_screen=True)
     plotter.add_mesh(arrows, scalars='values', cmap=colormap)
@@ -146,12 +146,13 @@ def visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_
     #        (-0.6411560169707968, -0.6555680388534001, 0.39893546888695003)]
     
     #plotter.camera_position = cpos
-    plotter.show(screenshot='viz_3d_denoised.png')
+    pv.set_plot_theme("document")
+    plotter.show(window_size=[4000, 4000], screenshot='viz_3d_denoised.png')
     plotter.close()
 
-ret_path = 'mouse_brain/img_retardance2D_t000_p000_z000.tif'
-azimuth_path = 'mouse_brain/img_azimuth_t000_p000_z000.tif'
-theta_path = 'mouse_brain/img_theta_t000_p000_z000.tif'
+ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_retardance2D_t000_p000_z000.tif'
+azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_azimuth_t000_p000_z000.tif'
+theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200302_20x_2D_whole_Mouse_brain/img_theta_t000_p000_z000.tif'
 
 visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.5, z_stack=1,
-                 spacing_xy=35, spacing_z=1, radius_scale=0.5, height_scale=1.8, colormap=my_colormap, neg_retardance=False, denoise=False)
+                 spacing_xy=50, spacing_z=1, radius_scale=0.6, height_scale=2.0, colormap=my_colormap, neg_retardance=False, denoise=False)

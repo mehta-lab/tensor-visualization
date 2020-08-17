@@ -1,5 +1,5 @@
 import pyvista as pv
-from pyvistaqt import BackgroundPlotter
+#from pyvistaqt import BackgroundPlotter
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import glob
@@ -41,9 +41,9 @@ iwidth_th = line_th[1] - line_th[0]
 def visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.2, z_stack=96,
                      spacing_xy=12, spacing_z=10, radius_scale=1.0, height_scale=10, colormap=my_colormap, neg_retardance=True, denoise=True):
     
-    ret_files = sorted(glob.glob(ret_path))
-    azimuth_files = sorted(glob.glob(azimuth_path))
-    theta_files = sorted(glob.glob(theta_path))
+    ret_files = [ret_path]
+    azimuth_files = [azimuth_path]
+    theta_files = [theta_path]
     
     N_z = z_stack
 
@@ -145,12 +145,13 @@ def visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_
     #        (148.0154105424881, 151.11349606513977, 43.7476863861084),
     #        (-0.6411560169707968, -0.6555680388534001, 0.39893546888695003)]
     
-    plotter.camera_position = cpos
+    #plotter.camera_position = cpos
     plotter.show(screenshot='viz_3d_denoised.png')
+    plotter.close()
 
-ret_path = '3d_dataset/retardance3D/*'
-azimuth_path = '3d_dataset/azimuth/*'
-theta_path = '3d_dataset/theta/*'
+ret_path = 'mouse_brain/img_retardance2D_t000_p000_z000.tif'
+azimuth_path = 'mouse_brain/img_azimuth_t000_p000_z000.tif'
+theta_path = 'mouse_brain/img_theta_t000_p000_z000.tif'
 
-visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.2, z_stack=96,
-                 spacing_xy=8, spacing_z=4, radius_scale=0.1, height_scale=1.2, colormap=my_colormap, neg_retardance=False, denoise=True)
+visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.5, z_stack=1,
+                 spacing_xy=35, spacing_z=1, radius_scale=0.5, height_scale=1.8, colormap=my_colormap, neg_retardance=False, denoise=False)

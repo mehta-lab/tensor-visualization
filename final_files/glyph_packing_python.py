@@ -1,7 +1,7 @@
 # Parameters
-initial_num_points = 50000
-final_num_points = 40000
-alpha = 3.0
+initial_num_points = 40000
+final_num_points = 22000
+alpha = 1.0
 max_time = 90.0
 min_time = 5.0
 num_iterations = 400
@@ -9,7 +9,7 @@ boundary = 50
 c_drag = 30.0
 num_cores = 32
 gamma = 0.5
-dataset = 'u2'
+dataset = 'kaza'
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -69,11 +69,12 @@ anisotropy, orientation = return_smooth(orientation, anisotropy)
 def return_D(position):
     scale_value = anisotropy[position[0]][position[1]]
     theta = orientation[position[0]][position[1]]
-    
-    if abs(scale_value) > 1:
-        scale_matrix = np.matrix([[scale_value, 0], [0, 1]])
-    else:
-        scale_matrix = np.matrix([[1, 0], [0, scale_value]])
+
+    scale_matrix = np.matrix([[scale_value, 0], [0, scale_value*0.1]])
+#     if abs(scale_value) > 1:
+#         scale_matrix = np.matrix([[scale_value, 0], [0, 1]])
+#     else:
+#         scale_matrix = np.matrix([[1, 0], [0, scale_value]])
     
     angle_matrix = np.matrix([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
     angle_matrix_2 = np.matrix([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])

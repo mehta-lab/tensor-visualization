@@ -136,7 +136,7 @@ def visualization_3d(ret_path, azimuth_path, theta_path, linelength=20, denoise_
     
     point_cloud = pv.PolyData(points)
     point_cloud['vectors'] = directions
-    point_cloud['values'] = scalars
+    point_cloud['values'] = sßcalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
     
     plotter = pv.Plotter(off_screen=True)

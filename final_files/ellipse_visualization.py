@@ -1,6 +1,7 @@
 # Parameters
 alpha = 1
 dataset = 'u2'
+pos_folder = 'results/'
 positions_file = 'fp_u2_alpha_1.0_numpoints_40000_drag_30.0.npy'
 
 import cv2
@@ -23,7 +24,7 @@ if dataset == 'u2':
     VSmooth = VSmooth*-1
     orientation = np.arctan2(VSmooth, USmooth)
 
-final_positions = np.load(positions_file)
+final_positions = np.load(pos_folder + positions_file)
 final_positions = final_positions.astype(int)
 
 within_boundary_pos = []
@@ -35,21 +36,21 @@ for i in range(len(final_positions)):
 major_axis_len = []
 minor_axis_len = []
 orientation_list = []
-scale_ellipse_major = alpha*1.1
-scale_ellipse_minor = alpha*0.9
+scale_ellipse_major = alpha
+scale_ellipse_minor = alpha
 
 for p in within_boundary_pos:
     orientation_list.append(orientation[p[0], p[1]])
     anisotropy_value = anisotropy[p[0], p[1]]
 
     if abs(anisotropy_value) < 1:
-        major_axis_len.append(1*0.01)
-        minor_axis_len.append(abs(anisotropy_value)*0.01)
+        major_axis_len.append(1*0.001)
+        minor_axis_len.append(abs(anisotropy_value)*0.001)
     else:
         minor_axis_len.append(1*scale_ellipse_minor)
         major_axis_len.append(abs(anisotropy_value)*scale_ellipse_major)
 
-jet = cm = plt.get_cmap('hsv')
+jet = cm = plt.get_cmap('hsv_r')
 
 cNorm  = colors.Normalize(vmin=min(orientation_list), vmax=max(orientation_list))
 scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=jet)
@@ -77,5 +78,5 @@ for e in ells:
     e.set_linewidth(0.5)
     k += 1
 
-fig.savefig('ellipse_' + positions_file + '.png', bbox_inches='tight')
+fig.savefig(pos_folder + 'ellipse_' + positions_file + '.png', bbox_inches='tight')
 plt.close(fig)

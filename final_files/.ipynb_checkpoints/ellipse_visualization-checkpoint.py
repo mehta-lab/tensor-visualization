@@ -1,5 +1,5 @@
 # Parameters
-alpha = 0.9
+alpha = 1
 dataset = 'u2'
 positions_file = 'fp_u2_alpha_1.0_numpoints_40000_drag_30.0.npy'
 
@@ -43,8 +43,8 @@ for p in within_boundary_pos:
     anisotropy_value = anisotropy[p[0], p[1]]
 
     if abs(anisotropy_value) < 1:
-        major_axis_len.append(1*0.2)
-        minor_axis_len.append(abs(anisotropy_value)*0.2)
+        major_axis_len.append(1*0.01)
+        minor_axis_len.append(abs(anisotropy_value)*0.01)
     else:
         minor_axis_len.append(1*scale_ellipse_minor)
         major_axis_len.append(abs(anisotropy_value)*scale_ellipse_major)

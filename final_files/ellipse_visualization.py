@@ -1,9 +1,8 @@
 # Parameters
-alpha = 1
-dataset = 'u2'
+alpha = 2
+dataset = 'kaza'
 pos_folder = 'results/'
-positions_file = 'fp_u2_alpha_1.0_numpoints_40000_drag_30.0.npy'
-
+positions_file = 'fp_kaza_alpha_1.1_numpoints_20000_drag_20.0.npy'
 import cv2
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
@@ -14,10 +13,12 @@ from skimage.transform import rescale
 
 anisotropy = cv2.imread('2d_data/' + dataset + '/retardance.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/' + dataset + '/azimuth.tif', -1).astype('float32')
-anisotropy = rescale(anisotropy, 0.5, anti_aliasing=True)
-orientation = rescale(orientation, 0.5, anti_aliasing=True)
-anisotropy = anisotropy / 65535*10
+# anisotropy = rescale(anisotropy, 0.5, anti_aliasing=True)
+# orientation = rescale(orientation, 0.5, anti_aliasing=True)
+# anisotropy = anisotropy / 65535*10
+# orientation = orientation / 18000*np.pi
 orientation = orientation / 18000*np.pi
+anisotropy = anisotropy / 10000
 
 if dataset == 'u2':
     USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
@@ -42,13 +43,16 @@ scale_ellipse_minor = alpha
 for p in within_boundary_pos:
     orientation_list.append(orientation[p[0], p[1]])
     anisotropy_value = anisotropy[p[0], p[1]]
+    
+    minor_axis_len.append(abs(anisotropy_value)*scale_ellipse_major*0.5)
+    major_axis_len.append(abs(anisotropy_value)*scale_ellipse_major)
 
-    if abs(anisotropy_value) < 1:
-        major_axis_len.append(1*0.001)
-        minor_axis_len.append(abs(anisotropy_value)*0.001)
-    else:
-        minor_axis_len.append(1*scale_ellipse_minor)
-        major_axis_len.append(abs(anisotropy_value)*scale_ellipse_major)
+#     if abs(anisotropy_value) < 1:
+#         major_axis_len.append(1*0.001)
+#         minor_axis_len.append(abs(anisotropy_value)*0.001)
+#     else:
+#         minor_axis_len.append(1*scale_ellipse_minor)
+#         major_axis_len.append(abs(anisotropy_value)*scale_ellipse_major)
 
 jet = cm = plt.get_cmap('hsv_r')
 

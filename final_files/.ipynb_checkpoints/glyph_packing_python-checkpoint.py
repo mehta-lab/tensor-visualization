@@ -1,12 +1,12 @@
 # Parameters
 initial_num_points = 40000
-final_num_points = 22000
-alpha = 1.0
+final_num_points = 20000
+alpha = 1.1
 max_time = 90.0
 min_time = 5.0
 num_iterations = 400
 boundary = 50
-c_drag = 30.0
+c_drag = 20.0
 num_cores = 32
 gamma = 0.5
 dataset = 'kaza'
@@ -45,12 +45,16 @@ def nanRobustBlur(I, dim):
 
 anisotropy = cv2.imread('2d_data/' + dataset + '/retardance.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/' + dataset + '/azimuth.tif', -1).astype('float32')
-anisotropy = rescale(anisotropy, 0.5, anti_aliasing=True)
-orientation = rescale(orientation, 0.5, anti_aliasing=True)
-anisotropy = anisotropy / 65535*10
-orientation = orientation / 18000*np.pi
+
+if dataset == 'kaza':
+    orientation = orientation / 18000*np.pi
+    anisotropy = anisotropy / 10000
 
 if dataset == 'u2':
+    anisotropy = rescale(anisotropy, 0.5, anti_aliasing=True)
+    orientation = rescale(orientation, 0.5, anti_aliasing=True)
+    anisotropy = anisotropy / 65535*10
+    orientation = orientation / 18000*np.pi
     USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
     VSmooth = VSmooth*-1
     orientation = np.arctan2(VSmooth, USmooth)
@@ -70,11 +74,10 @@ def return_D(position):
     scale_value = anisotropy[position[0]][position[1]]
     theta = orientation[position[0]][position[1]]
 
-    scale_matrix = np.matrix([[scale_value, 0], [0, scale_value*0.1]])
-#     if abs(scale_value) > 1:
-#         scale_matrix = np.matrix([[scale_value, 0], [0, 1]])
-#     else:
-#         scale_matrix = np.matrix([[1, 0], [0, scale_value]])
+    if abs(scale_value) > 1:
+        scale_matrix = np.matrix([[scale_value, 0], [0, 1]])
+    else:
+        scale_matrix = np.matrix([[1, 0], [0, scale_value]])
     
     angle_matrix = np.matrix([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
     angle_matrix_2 = np.matrix([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])
@@ -342,7 +345,7 @@ for k in range(num_iterations):
     curr_points = final_positions
     map_points = new_map_points
     
-    if total_dist/num_particles < 0.3:
+    if total_dist/num_particles < 0.1:
         break
 
 end_algo = time.time()

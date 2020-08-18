@@ -133,14 +133,45 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud['values'] = scalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale))
     
+    pv.set_plot_theme("document")
     plotter = pv.Plotter(off_screen=True)
-    plotter.add_mesh(arrows, scalars='values', cmap=colormap)
-    #cpos = [(355.00684967471466, 418.86730007740744, 816.415616146652),
-    #        (148.0154105424881, 151.11349606513977, 43.7476863861084),
-    #        (-0.6411560169707968, -0.6555680388534001, 0.39893546888695003)]
-    
+    plotter.add_mesh(arrows, scalars='values', cmap=my_colormap)
+
+    cpos = [(42005.913256443004, 45300.59710565851, 33205.93596521662),
+             (8799.977291226387, 12094.661140441895, 0.0),
+             (0.0, 0.0, 1.0)]
+
     plotter.camera_position = cpos
-    plotter.show(screenshot='viz_3d_denoised.png')
+    plotter.show(screenshot='viz_3d_denoised.png', auto_close=False)
+    
+    cpos = [(6326.055723489247, -31854.93084859698, 37016.423733957505),
+            (8799.977291226387, 12094.661140441895, 0.0),
+            (-0.024656002509784967, 0.6448150117921528, 0.7639408891450458)]
+
+    plotter.camera_position = cpos
+    plotter.show(screenshot='viz_3d_denoised_1.png', auto_close=False)
+    
+    cpos = [(-14974.677889777868, 54853.98011415804, 30237.542259690075),
+            (8799.977291226387, 12094.661140441895, 0.0),
+            (0.020720041021530022, -0.5695479618834873, 0.8216969021570129)]
+
+    plotter.camera_position = cpos
+    plotter.show(screenshot='viz_3d_denoised_2.png', auto_close=False)
+    
+    cpos = [(-24236.81859442234, 18223.13150972981, 46678.84444286234),
+            (8799.977291226387, 12094.661140441895, 0.0),
+            (0.5015221456196517, -0.7377928398332863, 0.4518155187062479)]
+
+    plotter.camera_position = cpos
+    plotter.show(screenshot='viz_3d_denoised_3.png', auto_close=False)
+    
+    cpos = [(-11338.989551706814, 10955.289141678039, 53861.17707519834),
+            (8799.977291226387, 12094.661140441895, 0.0),
+            (0.9363045415801348, 0.021336780894068604, 0.350540364576595)]
+
+    plotter.camera_position = cpos
+    plotter.show(screenshot='viz_3d_denoised_4.png', auto_close=False)
+    plotter.close()
 
 if dataset == 'kaza':
     ret_path = '3d_dataset/retardance3D/*'

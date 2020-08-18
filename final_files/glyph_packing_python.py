@@ -45,13 +45,16 @@ def nanRobustBlur(I, dim):
 
 anisotropy = cv2.imread('2d_data/' + dataset + '/retardance.tif', -1).astype('float32')
 orientation = cv2.imread('2d_data/' + dataset + '/azimuth.tif', -1).astype('float32')
-# anisotropy = rescale(anisotropy, 0.5, anti_aliasing=True)
-# orientation = rescale(orientation, 0.5, anti_aliasing=True)
-# anisotropy = anisotropy / 65535*10
-orientation = orientation / 18000*np.pi
-anisotropy = anisotropy / 10000
+
+if dataset == 'kaza':
+    orientation = orientation / 18000*np.pi
+    anisotropy = anisotropy / 10000
 
 if dataset == 'u2':
+    anisotropy = rescale(anisotropy, 0.5, anti_aliasing=True)
+    orientation = rescale(orientation, 0.5, anti_aliasing=True)
+    anisotropy = anisotropy / 65535*10
+    orientation = orientation / 18000*np.pi
     USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
     VSmooth = VSmooth*-1
     orientation = np.arctan2(VSmooth, USmooth)
@@ -71,11 +74,10 @@ def return_D(position):
     scale_value = anisotropy[position[0]][position[1]]
     theta = orientation[position[0]][position[1]]
 
-    scale_matrix = np.matrix([[scale_value, 0], [0, scale_value*0.1]])
-#     if abs(scale_value) > 1:
-#         scale_matrix = np.matrix([[scale_value, 0], [0, 1]])
-#     else:
-#         scale_matrix = np.matrix([[1, 0], [0, scale_value]])
+    if abs(scale_value) > 1:
+        scale_matrix = np.matrix([[scale_value, 0], [0, 1]])
+    else:
+        scale_matrix = np.matrix([[1, 0], [0, scale_value]])
     
     angle_matrix = np.matrix([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
     angle_matrix_2 = np.matrix([[np.cos(theta), np.sin(theta)], [-np.sin(theta), np.cos(theta)]])

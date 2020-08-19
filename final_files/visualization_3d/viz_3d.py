@@ -14,8 +14,8 @@ import time
 from numpy import linalg as LA
 
 # Generate colormap
-spaces_th = 193
-spaces_az = 223
+spaces_th = 733
+spaces_az = 773
 th,ph = np.meshgrid(np.linspace(0,np.pi,spaces_th),np.linspace(0,np.pi,spaces_az))
 orientation_image = np.transpose(np.array([ph/2/np.pi, th, np.ones_like(th)]),(1,2,0))
 face_color = orientation_3D_to_rgb(orientation_image, interp_belt = 100/180*np.pi, sat_factor = 1)
@@ -131,7 +131,7 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud = pv.PolyData(points)
     point_cloud['vectors'] = directions
     point_cloud['values'] = scalars
-    arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale))
+    arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
     
     pv.set_plot_theme("document")
     plotter = pv.Plotter(off_screen=True)
@@ -142,37 +142,38 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
              (0.0, 0.0, 1.0)]
 
     plotter.camera_position = cpos
-    plotter.show(screenshot='viz_3d_denoised.png', auto_close=False)
+    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised.png', auto_close=False)
     
     cpos = [(6326.055723489247, -31854.93084859698, 37016.423733957505),
             (8799.977291226387, 12094.661140441895, 0.0),
             (-0.024656002509784967, 0.6448150117921528, 0.7639408891450458)]
 
     plotter.camera_position = cpos
-    plotter.show(screenshot='viz_3d_denoised_1.png', auto_close=False)
+    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
     
     cpos = [(-14974.677889777868, 54853.98011415804, 30237.542259690075),
             (8799.977291226387, 12094.661140441895, 0.0),
             (0.020720041021530022, -0.5695479618834873, 0.8216969021570129)]
 
     plotter.camera_position = cpos
-    plotter.show(screenshot='viz_3d_denoised_2.png', auto_close=False)
+    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_2.png', auto_close=False)
     
     cpos = [(-24236.81859442234, 18223.13150972981, 46678.84444286234),
             (8799.977291226387, 12094.661140441895, 0.0),
             (0.5015221456196517, -0.7377928398332863, 0.4518155187062479)]
 
     plotter.camera_position = cpos
-    plotter.show(screenshot='viz_3d_denoised_3.png', auto_close=False)
+    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_3.png', auto_close=False)
     
     cpos = [(-11338.989551706814, 10955.289141678039, 53861.17707519834),
             (8799.977291226387, 12094.661140441895, 0.0),
             (0.9363045415801348, 0.021336780894068604, 0.350540364576595)]
 
     plotter.camera_position = cpos
-    plotter.show(screenshot='viz_3d_denoised_4.png', auto_close=False)
+    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_4.png', auto_close=False)
     plotter.close()
 
+dataset = 'mouse'
 if dataset == 'kaza':
     ret_path = '3d_dataset/retardance3D/*'
     azimuth_path = '3d_dataset/azimuth/*'
@@ -191,5 +192,5 @@ if dataset == 'mouse':
     azimuth_files = [azimuth_path]
     theta_files = [theta_path]
 
-visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(12, 12, 10), anisotropy_scale=0.2, z_stack=96,
-                 spacing_xy=8, spacing_z=4, radius_scale=0.1, height_scale=1.2, colormap=my_colormap, neg_retardance=False, denoise=True)
+visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=1,
+                 spacing_xy=100, spacing_z=1, radius_scale=0.5, height_scale=1.8, colormap=my_colormap, neg_retardance=False, denoise=False)

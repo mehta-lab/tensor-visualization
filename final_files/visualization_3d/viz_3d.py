@@ -13,11 +13,17 @@ from orientation_to_rgb import orientation_3D_to_rgb
 import time
 from numpy import linalg as LA
 
+dataset = 'kaza'
+
 # Generate colormap
 spaces_th = 733
 spaces_az = 773
 th,ph = np.meshgrid(np.linspace(0,np.pi,spaces_th),np.linspace(0,np.pi,spaces_az))
-orientation_image = np.transpose(np.array([ph/2/np.pi, th, np.ones_like(th)]),(1,2,0))
+
+if dataset == 'u2':
+    orientation_image = np.transpose(np.array([((ph + np.pi/2)%(2*np.pi))/2/np.pi, th, np.ones_like(th)]),(1,2,0))
+else:
+    orientation_image = np.transpose(np.array([ph/2/np.pi, th, np.ones_like(th)]),(1,2,0))
 face_color = orientation_3D_to_rgb(orientation_image, interp_belt = 100/180*np.pi, sat_factor = 1)
 
 mapping = np.linspace(0, spaces_th*spaces_az - 1, spaces_th*spaces_az)
@@ -136,11 +142,33 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     arrows.save("viz_3d_denoised_1.vtk")
     pv.set_plot_theme("document")
     plotter = pv.Plotter(off_screen=True)
-    plotter.add_mesh(arrows, scalars='values', cmap=my_colormap)
+    plotter.add_mesh(arrows, scalars='values', cmap=colormap)
+    
+    cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749),
+              (303.6804593205452, 397.3316192626953, 47.1121129989624),
+              (0.0, 0.0, 1.0)]
+    plotter.camera_position = cpos
+    plotter.show(window_size=[5000, 5000], auto_close=False)
+    plotter.write_frame()
 
-    #cpos = [(42005.913256443004, 45300.59710565851, 33205.93596521662),
-    #         (8799.977291226387, 12094.661140441895, 0.0),
-    #         (0.0, 0.0, 1.0)]
+    for i in range(100):
+        cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749 + i*10),
+                  (303.6804593205452, 397.3316192626953, 47.1121129989624),
+                  (0.0, 0.0, 1.0)]
+        plotter.camera_position = cpos
+        plotter.write_frame()  # Write this frame
+
+    for j in range(100):
+        cpos = [(1269.9879914563317, 1363.6391513984818 - j*10, 1013.419645134749 + i*10),
+                  (303.6804593205452, 397.3316192626953, 47.1121129989624),
+                  (0.0, 0.0, 1.0)]
+        plotter.camera_position = cpos
+        plotter.write_frame()  # Write this frame
+
+    plotter.close()
+#     cpos = [(42005.913256443004, 45300.59710565851, 33205.93596521662),
+#             (8799.977291226387, 12094.661140441895, 0.0),
+#             (0.0, 0.0, 1.0)]
 
     #plotter.camera_position = cpos
     #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised.png', auto_close=False)
@@ -171,10 +199,9 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     #        (0.9363045415801348, 0.021336780894068604, 0.350540364576595)]
 
     #plotter.camera_position = cpos
-    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
-    plotter.close()
+#     plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
+#     plotter.close()
 
-dataset = 'kaza'
 if dataset == 'kaza':
     ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/retardance3D/*'
     azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/azimuth/*'

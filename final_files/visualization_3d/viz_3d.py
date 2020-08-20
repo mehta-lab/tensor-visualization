@@ -16,8 +16,8 @@ from numpy import linalg as LA
 dataset = 'kaza'
 
 # Generate colormap
-spaces_th = 733
-spaces_az = 773
+spaces_th = 139
+spaces_az = 157
 th,ph = np.meshgrid(np.linspace(0,np.pi,spaces_th),np.linspace(0,np.pi,spaces_az))
 
 if dataset == 'u2':
@@ -138,17 +138,18 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud['vectors'] = directions
     point_cloud['values'] = scalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
-    
-    arrows.save("viz_3d_denoised_1.vtk")
+
+    filename = "viz_3d_denoised_1.mp4"
     pv.set_plot_theme("document")
-    plotter = pv.Plotter(off_screen=True)
+    plotter = pv.Plotter()
+    plotter.open_movie(filename)
     plotter.add_mesh(arrows, scalars='values', cmap=colormap)
     
     cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749),
               (303.6804593205452, 397.3316192626953, 47.1121129989624),
               (0.0, 0.0, 1.0)]
     plotter.camera_position = cpos
-    plotter.show(window_size=[5000, 5000], auto_close=False)
+    plotter.show(auto_close=False)
     plotter.write_frame()
 
     for i in range(100):
@@ -220,5 +221,5 @@ if dataset == 'mouse':
     azimuth_files = [azimuth_path]
     theta_files = [theta_path]
 
-visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.2, z_stack=96,
-                 spacing_xy=100, spacing_z=5, radius_scale=0.3, height_scale=3.0, colormap=my_colormap, neg_retardance=False, denoise=False)
+visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=96,
+                 spacing_xy=10, spacing_z=4, radius_scale=0.3, height_scale=2.1, colormap=my_colormap, neg_retardance=False, denoise=False)

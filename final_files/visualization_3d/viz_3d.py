@@ -144,66 +144,36 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     plotter = pv.Plotter()
     plotter.open_movie(filename)
     plotter.add_mesh(arrows, scalars='values', cmap=colormap)
-
-    arrows.save("kaza.vtk")
     
-    cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749),
-              (303.6804593205452, 397.3316192626953, 47.1121129989624),
-              (0.0, 0.0, 1.0)]
+    cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896),
+            (139.62683308124542, 159.2972927093506, 37.324169874191284),
+            (0.0, 0.0, 1.0)]
     plotter.camera_position = cpos
     plotter.show(auto_close=False)
     plotter.write_frame()
 
     for i in range(100):
-        cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749 + i*10),
-                  (303.6804593205452, 397.3316192626953, 47.1121129989624),
-                  (0.0, 0.0, 1.0)]
+        cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896 + i*5),
+                (139.62683308124542, 159.2972927093506, 37.324169874191284),
+                (0.0, 0.0, 1.0)]
         plotter.camera_position = cpos
         plotter.write_frame()  # Write this frame
 
     for j in range(100):
-        cpos = [(1269.9879914563317, 1363.6391513984818 - j*10, 1013.419645134749 + i*10),
-                  (303.6804593205452, 397.3316192626953, 47.1121129989624),
-                  (0.0, 0.0, 1.0)]
+        cpos = [(598.635899228783, 618.3063588568882 - j*5, 496.33323602172896 + i*5),
+                (139.62683308124542, 159.2972927093506, 37.324169874191284),
+                (0.0, 0.0, 1.0)]
+        plotter.camera_position = cpos
+        plotter.write_frame()  # Write this frame
+    
+    for k in range(100):
+        cpos = [(598.635899228783, 618.3063588568882 - j*5, 496.33323602172896 + i*5),
+                (139.62683308124542, 159.2972927093506, 37.324169874191284),
+                (0.0 + k*0.005, 0.0 + k*0.005, 1.0 + k*0.005)]
         plotter.camera_position = cpos
         plotter.write_frame()  # Write this frame
 
     plotter.close()
-#     cpos = [(42005.913256443004, 45300.59710565851, 33205.93596521662),
-#             (8799.977291226387, 12094.661140441895, 0.0),
-#             (0.0, 0.0, 1.0)]
-
-    #plotter.camera_position = cpos
-    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised.png', auto_close=False)
-    
-    #cpos = [(6326.055723489247, -31854.93084859698, 37016.423733957505),
-    #        (8799.977291226387, 12094.661140441895, 0.0),
-    #        (-0.024656002509784967, 0.6448150117921528, 0.7639408891450458)]
-
-    #plotter.camera_position = cpos
-    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
-    
-    #cpos = [(-14974.677889777868, 54853.98011415804, 30237.542259690075),
-    #        (8799.977291226387, 12094.661140441895, 0.0),
-    #        (0.020720041021530022, -0.5695479618834873, 0.8216969021570129)]
-
-    #plotter.camera_position = cpos
-    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_2.png', auto_close=False)
-    
-    #cpos = [(-24236.81859442234, 18223.13150972981, 46678.84444286234),
-    #        (8799.977291226387, 12094.661140441895, 0.0),
-    #        (0.5015221456196517, -0.7377928398332863, 0.4518155187062479)]
-
-    #plotter.camera_position = cpos
-    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_3.png', auto_close=False)
-    
-    #cpos = [(-11338.989551706814, 10955.289141678039, 53861.17707519834),
-    #        (8799.977291226387, 12094.661140441895, 0.0),
-    #        (0.9363045415801348, 0.021336780894068604, 0.350540364576595)]
-
-    #plotter.camera_position = cpos
-#     plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
-#     plotter.close()
 
 if dataset == 'kaza':
     ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/retardance3D/*'
@@ -224,4 +194,4 @@ if dataset == 'mouse':
     theta_files = [theta_path]
 
 visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=96,
-                 spacing_xy=20, spacing_z=20, radius_scale=0.3, height_scale=2.1, colormap=my_colormap, neg_retardance=False, denoise=False)
+                 spacing_xy=10, spacing_z=4, radius_scale=0.3, height_scale=2.1, colormap=my_colormap, neg_retardance=False, denoise=False)

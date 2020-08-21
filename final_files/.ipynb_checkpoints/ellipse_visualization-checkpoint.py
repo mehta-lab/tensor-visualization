@@ -1,8 +1,8 @@
 # Parameters
-alpha = 2.5
-dataset = 'kaza'
+alpha = 1
+dataset = 'u2'
 pos_folder = 'results/'
-positions_file = 'fp_kaza_alpha_2.0_numpoints_23000_drag_20.0.npy'
+positions_file = 'fp_u2_alpha_1.0_numpoints_50000_drag_30.0.npy'
 import cv2
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt

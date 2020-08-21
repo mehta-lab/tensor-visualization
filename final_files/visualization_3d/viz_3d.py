@@ -13,11 +13,17 @@ from orientation_to_rgb import orientation_3D_to_rgb
 import time
 from numpy import linalg as LA
 
+dataset = 'kaza'
+
 # Generate colormap
-spaces_th = 733
-spaces_az = 773
+spaces_th = 139
+spaces_az = 157
 th,ph = np.meshgrid(np.linspace(0,np.pi,spaces_th),np.linspace(0,np.pi,spaces_az))
-orientation_image = np.transpose(np.array([ph/2/np.pi, th, np.ones_like(th)]),(1,2,0))
+
+if dataset == 'u2':
+    orientation_image = np.transpose(np.array([((ph + np.pi/2)%(2*np.pi))/2/np.pi, th, np.ones_like(th)]),(1,2,0))
+else:
+    orientation_image = np.transpose(np.array([ph/2/np.pi, th, np.ones_like(th)]),(1,2,0))
 face_color = orientation_3D_to_rgb(orientation_image, interp_belt = 100/180*np.pi, sat_factor = 1)
 
 mapping = np.linspace(0, spaces_th*spaces_az - 1, spaces_th*spaces_az)
@@ -132,52 +138,75 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud['vectors'] = directions
     point_cloud['values'] = scalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
-    
+
+    filename = "viz_3d_denoised_1.mp4"
     pv.set_plot_theme("document")
-    plotter = pv.Plotter(off_screen=True)
-    plotter.add_mesh(arrows, scalars='values', cmap=my_colormap)
-
-    cpos = [(42005.913256443004, 45300.59710565851, 33205.93596521662),
-             (8799.977291226387, 12094.661140441895, 0.0),
-             (0.0, 0.0, 1.0)]
-
-    plotter.camera_position = cpos
-    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised.png', auto_close=False)
+    plotter = pv.Plotter()
+    plotter.open_movie(filename)
+    plotter.add_mesh(arrows, scalars='values', cmap=colormap)
     
-    cpos = [(6326.055723489247, -31854.93084859698, 37016.423733957505),
-            (8799.977291226387, 12094.661140441895, 0.0),
-            (-0.024656002509784967, 0.6448150117921528, 0.7639408891450458)]
-
+    cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749),
+              (303.6804593205452, 397.3316192626953, 47.1121129989624),
+              (0.0, 0.0, 1.0)]
     plotter.camera_position = cpos
-    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
-    
-    cpos = [(-14974.677889777868, 54853.98011415804, 30237.542259690075),
-            (8799.977291226387, 12094.661140441895, 0.0),
-            (0.020720041021530022, -0.5695479618834873, 0.8216969021570129)]
+    plotter.show(auto_close=False)
+    plotter.write_frame()
 
-    plotter.camera_position = cpos
-    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_2.png', auto_close=False)
-    
-    cpos = [(-24236.81859442234, 18223.13150972981, 46678.84444286234),
-            (8799.977291226387, 12094.661140441895, 0.0),
-            (0.5015221456196517, -0.7377928398332863, 0.4518155187062479)]
+    for i in range(100):
+        cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749 + i*10),
+                  (303.6804593205452, 397.3316192626953, 47.1121129989624),
+                  (0.0, 0.0, 1.0)]
+        plotter.camera_position = cpos
+        plotter.write_frame()  # Write this frame
 
-    plotter.camera_position = cpos
-    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_3.png', auto_close=False)
-    
-    cpos = [(-11338.989551706814, 10955.289141678039, 53861.17707519834),
-            (8799.977291226387, 12094.661140441895, 0.0),
-            (0.9363045415801348, 0.021336780894068604, 0.350540364576595)]
+    for j in range(100):
+        cpos = [(1269.9879914563317, 1363.6391513984818 - j*10, 1013.419645134749 + i*10),
+                  (303.6804593205452, 397.3316192626953, 47.1121129989624),
+                  (0.0, 0.0, 1.0)]
+        plotter.camera_position = cpos
+        plotter.write_frame()  # Write this frame
 
-    plotter.camera_position = cpos
-    plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_4.png', auto_close=False)
     plotter.close()
+#     cpos = [(42005.913256443004, 45300.59710565851, 33205.93596521662),
+#             (8799.977291226387, 12094.661140441895, 0.0),
+#             (0.0, 0.0, 1.0)]
 
-dataset = 'mouse'
+    #plotter.camera_position = cpos
+    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised.png', auto_close=False)
+    
+    #cpos = [(6326.055723489247, -31854.93084859698, 37016.423733957505),
+    #        (8799.977291226387, 12094.661140441895, 0.0),
+    #        (-0.024656002509784967, 0.6448150117921528, 0.7639408891450458)]
+
+    #plotter.camera_position = cpos
+    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
+    
+    #cpos = [(-14974.677889777868, 54853.98011415804, 30237.542259690075),
+    #        (8799.977291226387, 12094.661140441895, 0.0),
+    #        (0.020720041021530022, -0.5695479618834873, 0.8216969021570129)]
+
+    #plotter.camera_position = cpos
+    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_2.png', auto_close=False)
+    
+    #cpos = [(-24236.81859442234, 18223.13150972981, 46678.84444286234),
+    #        (8799.977291226387, 12094.661140441895, 0.0),
+    #        (0.5015221456196517, -0.7377928398332863, 0.4518155187062479)]
+
+    #plotter.camera_position = cpos
+    #plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_3.png', auto_close=False)
+    
+    #cpos = [(-11338.989551706814, 10955.289141678039, 53861.17707519834),
+    #        (8799.977291226387, 12094.661140441895, 0.0),
+    #        (0.9363045415801348, 0.021336780894068604, 0.350540364576595)]
+
+    #plotter.camera_position = cpos
+#     plotter.show(window_size=[5000, 5000], screenshot='viz_3d_denoised_1.png', auto_close=False)
+#     plotter.close()
+
 if dataset == 'kaza':
-    ret_path = '3d_dataset/retardance3D/*'
-    azimuth_path = '3d_dataset/azimuth/*'
-    theta_path = '3d_dataset/theta/*'
+    ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/retardance3D/*'
+    azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/azimuth/*'
+    theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/theta/*'
 
     ret_files = sorted(glob.glob(ret_path))
     azimuth_files = sorted(glob.glob(azimuth_path))
@@ -192,5 +221,5 @@ if dataset == 'mouse':
     azimuth_files = [azimuth_path]
     theta_files = [theta_path]
 
-visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=1,
-                 spacing_xy=100, spacing_z=1, radius_scale=0.5, height_scale=1.8, colormap=my_colormap, neg_retardance=False, denoise=False)
+visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=96,
+                 spacing_xy=10, spacing_z=4, radius_scale=0.3, height_scale=2.1, colormap=my_colormap, neg_retardance=False, denoise=False)

@@ -1,13 +1,13 @@
 # Parameters
-initial_num_points = 30000
-final_num_points = 22000
+initial_num_points = 55000
+final_num_points = 40000
 alpha = 3.0
-max_time = 90.0
-min_time = 5.0
+max_time = 50.0
+min_time = 1.0
 num_iterations = 400
 boundary = 50
-c_drag = 20.0
-num_cores = 32
+c_drag = 10.0
+num_cores = 16
 gamma = 0.5
 dataset = 'kaza'
 
@@ -345,7 +345,7 @@ for k in range(num_iterations):
     curr_points = final_positions
     map_points = new_map_points
     
-    if total_dist/num_particles < 0.1:
+    if total_dist/num_particles < 0.5:
         break
 
 end_algo = time.time()

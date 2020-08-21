@@ -144,6 +144,8 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     plotter = pv.Plotter()
     plotter.open_movie(filename)
     plotter.add_mesh(arrows, scalars='values', cmap=colormap)
+
+    arrows.save("kaza.vtk")
     
     cpos = [(1269.9879914563317, 1363.6391513984818, 1013.419645134749),
               (303.6804593205452, 397.3316192626953, 47.1121129989624),
@@ -204,9 +206,9 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
 #     plotter.close()
 
 if dataset == 'kaza':
-    ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/retardance3D/*'
-    azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/azimuth/*'
-    theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_New_Kazansky_Target/theta/*'
+    ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/retardance3D/*'
+    azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/azimuth/*'
+    theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/theta/*'
 
     ret_files = sorted(glob.glob(ret_path))
     azimuth_files = sorted(glob.glob(azimuth_path))
@@ -222,4 +224,4 @@ if dataset == 'mouse':
     theta_files = [theta_path]
 
 visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=96,
-                 spacing_xy=10, spacing_z=4, radius_scale=0.3, height_scale=2.1, colormap=my_colormap, neg_retardance=False, denoise=False)
+                 spacing_xy=20, spacing_z=20, radius_scale=0.3, height_scale=2.1, colormap=my_colormap, neg_retardance=False, denoise=False)

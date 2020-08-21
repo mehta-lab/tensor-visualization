@@ -1,8 +1,8 @@
 # Parameters
-alpha = 1.5
+alpha = 2.5
 dataset = 'kaza'
 pos_folder = 'results/'
-positions_file = 'fp_kaza_alpha_1.0_numpoints_20000_drag_30.0.npy'
+positions_file = 'fp_kaza_alpha_2.0_numpoints_23000_drag_20.0.npy'
 import cv2
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
@@ -39,14 +39,14 @@ for i in range(len(final_positions)):
 major_axis_len = []
 minor_axis_len = []
 orientation_list = []
-scale_ellipse_major = alpha*1.1
+scale_ellipse_major = alpha*1
 scale_ellipse_minor = alpha*0.9
 
 for p in within_boundary_pos:
     orientation_list.append(orientation[p[0], p[1]])
     anisotropy_value = anisotropy[p[0], p[1]]
 
-    if abs(anisotropy_value) < 1:
+    if abs(anisotropy_value) < 1.5:
         major_axis_len.append(1*0.001)
         minor_axis_len.append(abs(anisotropy_value)*0.001)
     else:

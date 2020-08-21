@@ -13,7 +13,7 @@ from orientation_to_rgb import orientation_3D_to_rgb
 import time
 from numpy import linalg as LA
 
-dataset = 'kaza'
+dataset = 'mouse'
 
 # Generate colormap
 spaces_th = 139
@@ -138,8 +138,9 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud['vectors'] = directions
     point_cloud['values'] = scalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
-
-    filename = "viz_3d_denoised_1.mp4"
+    
+    arrows.save("arrows.vtk")
+    filename = "viz_3d_denoised_2.mp4"
     pv.set_plot_theme("document")
     plotter = pv.Plotter()
     plotter.open_movie(filename)
@@ -193,5 +194,5 @@ if dataset == 'mouse':
     azimuth_files = [azimuth_path]
     theta_files = [theta_path]
 
-visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=96,
-                 spacing_xy=10, spacing_z=4, radius_scale=0.3, height_scale=2.1, colormap=my_colormap, neg_retardance=False, denoise=False)
+visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=1,
+                 spacing_xy=800, spacing_z=1, radius_scale=0.15, height_scale=1.6, colormap=my_colormap, neg_retardance=False, denoise=False)

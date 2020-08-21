@@ -1,15 +1,15 @@
 # Parameters
-initial_num_points = 70000
-final_num_points = 50000
-alpha = 1.0
+initial_num_points = 30000
+final_num_points = 22000
+alpha = 3.0
 max_time = 90.0
 min_time = 5.0
 num_iterations = 400
 boundary = 50
-c_drag = 30.0
+c_drag = 20.0
 num_cores = 32
 gamma = 0.5
-dataset = 'u2'
+dataset = 'kaza'
 
 import numpy as np
 import matplotlib.pyplot as plt

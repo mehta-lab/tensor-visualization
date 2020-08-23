@@ -146,12 +146,12 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     plotter.open_movie(filename)
     plotter.add_mesh(arrows, scalars='values', cmap=colormap)
     
-    cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896),
-            (139.62683308124542, 159.2972927093506, 37.324169874191284),
-            (0.0, 0.0, 1.0)]
-    plotter.camera_position = cpos
+    #cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896),
+    #        (139.62683308124542, 159.2972927093506, 37.324169874191284),
+    #        (0.0, 0.0, 1.0)]
+    #plotter.camera_position = cpos
     plotter.show(auto_close=False)
-    plotter.write_frame()
+    #plotter.write_frame()
 
     for i in range(100):
         cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896 + i*5),
@@ -195,4 +195,4 @@ if dataset == 'mouse':
     theta_files = [theta_path]
 
 visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=1,
-                 spacing_xy=800, spacing_z=1, radius_scale=0.15, height_scale=1.6, colormap=my_colormap, neg_retardance=False, denoise=False)
+                 spacing_xy=500, spacing_z=1, radius_scale=0.5, height_scale=8.0, colormap=my_colormap, neg_retardance=False, denoise=False)

@@ -20,7 +20,7 @@ spaces_th = 139
 spaces_az = 157
 th,ph = np.meshgrid(np.linspace(0,np.pi,spaces_th),np.linspace(0,np.pi,spaces_az))
 
-if dataset == 'u2':
+if dataset == 'mouse':
     orientation_image = np.transpose(np.array([((ph + np.pi/2)%(2*np.pi))/2/np.pi, th, np.ones_like(th)]),(1,2,0))
 else:
     orientation_image = np.transpose(np.array([ph/2/np.pi, th, np.ones_like(th)]),(1,2,0))
@@ -138,14 +138,16 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud['vectors'] = directions
     point_cloud['values'] = scalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
-    
-    arrows.save("arrows.vtk")
+
     filename = "viz_3d_denoised_2.mp4"
     pv.set_plot_theme("document")
     plotter = pv.Plotter()
     plotter.open_movie(filename)
-    plotter.add_mesh(arrows, scalars='values', cmap=colormap)
-    
+    plotter.add_mesh(arrows, scalars='values', cmap=my_colormap)
+
+    cpos = [(41914.98405034885, 45261.74263508663, 33163.87155659542),
+            (8751.112493753433, 12097.871078491211, 0.0),
+            (0.0, 0.0, 1.0)]
     #cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896),
     #        (139.62683308124542, 159.2972927093506, 37.324169874191284),
     #        (0.0, 0.0, 1.0)]
@@ -153,23 +155,29 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     plotter.show(auto_close=False)
     #plotter.write_frame()
 
-    for i in range(100):
-        cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896 + i*5),
-                (139.62683308124542, 159.2972927093506, 37.324169874191284),
+    for i in range(200):
+    #         cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896 + i*5),
+    #                 (139.62683308124542, 159.2972927093506, 37.324169874191284),
+    #                 (0.0, 0.0, 1.0)]
+        cpos = [(41914.98405034885, 45261.74263508663, 33163.87155659542 + i*100),
+                (8751.112493753433, 12097.871078491211, 0.0),
                 (0.0, 0.0, 1.0)]
         plotter.camera_position = cpos
         plotter.write_frame()  # Write this frame
 
-    for j in range(100):
-        cpos = [(598.635899228783, 618.3063588568882 - j*5, 496.33323602172896 + i*5),
-                (139.62683308124542, 159.2972927093506, 37.324169874191284),
+    for j in range(200):
+    #         cpos = [(598.635899228783, 618.3063588568882 - j*5, 496.33323602172896 + i*5),
+    #                 (139.62683308124542, 159.2972927093506, 37.324169874191284),
+    #                 (0.0, 0.0, 1.0)]
+        cpos = [(41914.98405034885, 45261.74263508663 - j*100, 33163.87155659542 + i*100),
+                (8751.112493753433, 12097.871078491211, 0.0),
                 (0.0, 0.0, 1.0)]
         plotter.camera_position = cpos
         plotter.write_frame()  # Write this frame
-    
+
     for k in range(100):
-        cpos = [(598.635899228783, 618.3063588568882 - j*5, 496.33323602172896 + i*5),
-                (139.62683308124542, 159.2972927093506, 37.324169874191284),
+        cpos = [(41914.98405034885, 45261.74263508663 - j*100, 33163.87155659542 + i*100),
+                (8751.112493753433, 12097.871078491211, 0.0),
                 (0.0 + k*0.005, 0.0 + k*0.005, 1.0 + k*0.005)]
         plotter.camera_position = cpos
         plotter.write_frame()  # Write this frame

@@ -1,13 +1,13 @@
 # Parameters
 initial_num_points = 30000
-final_num_points = 25000
-alpha = 10.0
-max_time = 50.0
-min_time = 1.0
+final_num_points = 22000
+alpha = 1.0
+max_time = 90.0
+min_time = 5.0
 num_iterations = 400
 boundary = 50
-c_drag = 10.0
-num_cores = 8
+c_drag = 30.0
+num_cores = 32
 gamma = 0.5
 dataset = 'kaza'
 
@@ -206,155 +206,157 @@ det_D_list = [x/max_det for x in det_D_list]
 points_rejected = np.random.choice(len(random_points), initial_num_points - final_num_points, det_D_list)
 final_points = [random_points[i] for i in range(len(random_points)) if i not in points_rejected]
 
-# eig_D = [max(np.linalg.eig(return_D_interp(pos))[0]) for pos in random_points]
-# max_eig = max(eig_D)
+eig_D = [max(np.linalg.eig(return_D_interp(pos))[0]) for pos in random_points]
+max_eig = max(eig_D)
 
-# edge_length = 2*alpha*max_eig*(1+gamma)
+edge_length = 2*alpha*max_eig*(1+gamma)
 
-# def bin_coords(pos):
-#     x_coord = np.floor(pos[0]/edge_length)
-#     y_coord = np.floor(pos[1]/edge_length)
+def bin_coords(pos):
+    x_coord = np.floor(pos[0]/edge_length)
+    y_coord = np.floor(pos[1]/edge_length)
     
-#     return (x_coord, y_coord)
+    return (x_coord, y_coord)
 
-# curr_points = final_points
+curr_points = final_points
 
-# def form_dict(points):
-#     dict_points = {}
+def form_dict(points):
+    dict_points = {}
 
-#     for point in points:
-#         bin_coord = bin_coords(point)
+    for point in points:
+        bin_coord = bin_coords(point)
 
-#         if bin_coord in dict_points.keys():
-#             dict_points[bin_coord].append(point)
-#         else:
-#             dict_points[bin_coord] = [point]
+        if bin_coord in dict_points.keys():
+            dict_points[bin_coord].append(point)
+        else:
+            dict_points[bin_coord] = [point]
     
-#     return dict_points
+    return dict_points
 
-# def total_force_on_point(index, list_points, map_points, approx=True):
-#     p_a = list_points[index]
-#     bin_coord = bin_coords(p_a)
-#     bin_x = bin_coord[0]
-#     bin_y = bin_coord[1]
+def total_force_on_point(index, list_points, map_points, approx=True):
+    p_a = list_points[index]
+    bin_coord = bin_coords(p_a)
+    bin_x = bin_coord[0]
+    bin_y = bin_coord[1]
 
-#     points_cons = []
+    points_cons = []
 
-#     points_cons += map_points[bin_coord]
+    points_cons += map_points[bin_coord]
 
-#     if bin_x - 1 >= 0:
-#         if (bin_x - 1, bin_y) in map_points.keys():
-#             points_cons += map_points[(bin_x - 1, bin_y)]
+    if bin_x - 1 >= 0:
+        if (bin_x - 1, bin_y) in map_points.keys():
+            points_cons += map_points[(bin_x - 1, bin_y)]
 
-#     if bin_y - 1 >= 0:
-#         if (bin_x, bin_y - 1) in map_points.keys():
-#             points_cons += map_points[(bin_x, bin_y - 1)]
+    if bin_y - 1 >= 0:
+        if (bin_x, bin_y - 1) in map_points.keys():
+            points_cons += map_points[(bin_x, bin_y - 1)]
 
-#     if bin_x + 1 < anisotropy.shape[0]:
-#         if (bin_x + 1, bin_y) in map_points.keys():
-#             points_cons += map_points[(bin_x + 1, bin_y)]
+    if bin_x + 1 < anisotropy.shape[0]:
+        if (bin_x + 1, bin_y) in map_points.keys():
+            points_cons += map_points[(bin_x + 1, bin_y)]
 
-#     if bin_y + 1 < anisotropy.shape[1]:
-#         if (bin_x, bin_y + 1) in map_points.keys():
-#             points_cons += map_points[(bin_x, bin_y + 1)]
+    if bin_y + 1 < anisotropy.shape[1]:
+        if (bin_x, bin_y + 1) in map_points.keys():
+            points_cons += map_points[(bin_x, bin_y + 1)]
     
-#     total_force = return_total_force(p_a, points_cons, approx)
+    total_force = return_total_force(p_a, points_cons, approx)
 
-#     return total_force, len(points_cons)
+    return total_force, len(points_cons)
 
-# def diff_equation(y, t, c_drag, total_force):
-#     p0, p1, r0, r1 = y
-#     dydt = [r0, r1, total_force[0] - c_drag*r0, total_force[1] - c_drag*r1]
-#     return dydt
+def diff_equation(y, t, c_drag, total_force):
+    p0, p1, r0, r1 = y
+    dydt = [r0, r1, total_force[0] - c_drag*r0, total_force[1] - c_drag*r1]
+    return dydt
 
-# def solve_particle_path_multiple(index_start, initial_pos, map_points, time_integrate, num_points_per_core, approx=True):
-#     sol_list = []
-#     tot_points_list = []
+def solve_particle_path_multiple(index_start, initial_pos, map_points, time_integrate, num_points_per_core, approx=True):
+    sol_list = []
+    tot_points_list = []
     
-#     if index_start + num_points_per_core < len(initial_pos):
-#         limit = index_start + num_points_per_core
-#     else:
-#         limit = len(initial_pos)
+    if index_start + num_points_per_core < len(initial_pos):
+        limit = index_start + num_points_per_core
+    else:
+        limit = len(initial_pos)
 
-#     for index in range(index_start, limit):
-#         y0 = [initial_pos[index][0], initial_pos[index][1], 0.0, 0.0]  
-#         t = np.linspace(0, time_integrate, 10) 
-#         tf, tot_points = total_force_on_point(index, initial_pos, map_points, approx)
-#         sol = odeint(diff_equation, y0, t, args=(c_drag, tf))
-#         sol_list.append(sol)
-#         tot_points_list.append(tot_points)
+    for index in range(index_start, limit):
+        y0 = [initial_pos[index][0], initial_pos[index][1], 0.0, 0.0]  
+        t = np.linspace(0, time_integrate, 10) 
+        tf, tot_points = total_force_on_point(index, initial_pos, map_points, approx)
+        sol = odeint(diff_equation, y0, t, args=(c_drag, tf))
+        sol_list.append(sol)
+        tot_points_list.append(tot_points)
         
-#     return sol_list, tot_points_list
+    return sol_list, tot_points_list
 
-# map_points = form_dict(curr_points)
+map_points = form_dict(curr_points)
 
-# slope = (max_time - min_time)/(1 - num_iterations)
-# constant = (num_iterations*max_time - min_time)/(num_iterations - 1)      
-# pool = mp.Pool(num_cores)
+slope = (max_time - min_time)/(1 - num_iterations)
+constant = (num_iterations*max_time - min_time)/(num_iterations - 1)      
+pool = mp.Pool(num_cores)
 
-# start_algo = time.time()
-# for k in range(num_iterations):
-#     start_iteration = time.clock()
-#     final_positions = []
-#     num_particles = 0
-#     total_dist = 0
-#     new_map_points = {}
-#     avg_total_points = 0
-#     time_integrate = slope*(k+1) + constant
+start_algo = time.time()
+for k in range(num_iterations):
+    start_iteration = time.clock()
+    final_positions = []
+    num_particles = 0
+    total_dist = 0
+    new_map_points = {}
+    avg_total_points = 0
+    time_integrate = slope*(k+1) + constant
     
-#     total_points = len(curr_points)
-#     num_points_per_core = int(total_points/num_cores)
+    total_points = len(curr_points)
+    num_points_per_core = int(total_points/num_cores)
     
-#     if k < 8:
-#         processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, True)) for i in range(0, total_points, num_points_per_core)]
-#     else:
-#         processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, False)) for i in range(0, total_points, num_points_per_core)]
+    if k < 8:
+        processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, True)) for i in range(0, total_points, num_points_per_core)]
+    else:
+        processes = [pool.apply_async(solve_particle_path_multiple, args=(i, curr_points, map_points, time_integrate, num_points_per_core, False)) for i in range(0, total_points, num_points_per_core)]
         
-#     results = [process.get() for process in processes]
+    results = [process.get() for process in processes]
 
-#     for i in range(len(results)):
-#         sol_list = results[i][0]
-#         tot_points_list = results[i][1]
+    for i in range(len(results)):
+        sol_list = results[i][0]
+        tot_points_list = results[i][1]
         
-#         for j in range(len(sol_list)):
-#             sol = sol_list[j]
-#             tot_points = tot_points_list[j]
+        for j in range(len(sol_list)):
+            sol = sol_list[j]
+            tot_points = tot_points_list[j]
 
-#             if sol[-1, 0] >= -boundary and sol[-1, 0] <= anisotropy.shape[0] + boundary and \
-#                sol[-1, 1] >= -boundary and sol[-1, 1] <= anisotropy.shape[1] + boundary:
-#                 final_positions.append((sol[-1, 0], sol[-1, 1]))
-#                 num_particles += 1
-#                 avg_total_points += tot_points
-#                 total_dist += LA.norm(np.array([sol[-1, 0], sol[-1, 1]]) - np.array([sol[0, 0], sol[0, 1]]))     
+            if sol[-1, 0] >= -boundary and sol[-1, 0] <= anisotropy.shape[0] + boundary and \
+               sol[-1, 1] >= -boundary and sol[-1, 1] <= anisotropy.shape[1] + boundary:
+                final_positions.append((sol[-1, 0], sol[-1, 1]))
+                num_particles += 1
+                avg_total_points += tot_points
+                total_dist += LA.norm(np.array([sol[-1, 0], sol[-1, 1]]) - np.array([sol[0, 0], sol[0, 1]]))     
 
-#                 new_bin_coord = bin_coords((sol[-1, 0], sol[-1, 1]))
+                new_bin_coord = bin_coords((sol[-1, 0], sol[-1, 1]))
 
-#                 if new_bin_coord in new_map_points.keys():
-#                     new_map_points[new_bin_coord].append((sol[-1, 0], sol[-1, 1]))
-#                 else:
-#                     new_map_points[new_bin_coord] = [(sol[-1, 0], sol[-1, 1])]
+                if new_bin_coord in new_map_points.keys():
+                    new_map_points[new_bin_coord].append((sol[-1, 0], sol[-1, 1]))
+                else:
+                    new_map_points[new_bin_coord] = [(sol[-1, 0], sol[-1, 1])]
     
-#     if k%4 == 0: 
-#         print("Distances moved by particle:", total_dist/num_particles)
-#         print("Number of particles:", num_particles)
-#         print("Number of particles for force:", avg_total_points/num_particles)
-#         end_iteration = time.clock()
-#         print("Time taken for iteration: ", end_iteration - start_iteration)
-#         print("")
+    if k%4 == 0: 
+        print("Distances moved by particle:", total_dist/num_particles)
+        print("Number of particles:", num_particles)
+        print("Number of particles for force:", avg_total_points/num_particles)
+        end_iteration = time.clock()
+        print("Time taken for iteration: ", end_iteration - start_iteration)
+        print("")
     
-#     curr_points = final_positions
-#     map_points = new_map_points
+    curr_points = final_positions
+    map_points = new_map_points
     
-#     if total_dist/num_particles < 0.5:
-#         break
+    np.save('fp_' + dataset + '_alpha_' + str(alpha) + '_numpoints_' + str(final_num_points) + '_drag_' + str(c_drag) + '_iter_' + str(k), curr_points)
+    
+    if total_dist/num_particles < 0.5:
+        break
 
-# end_algo = time.time()
+end_algo = time.time()
 
-# print("Total time taken: ", end_algo - start_algo)
+print("Total time taken: ", end_algo - start_algo)
 
-# final_positions = np.array(final_positions)
-# final_positions = np.around(final_positions, decimals=0)
+final_positions = np.array(final_positions)
+final_positions = np.around(final_positions, decimals=0)
 
-np.save('fp_' + dataset + '_alpha_' + str(alpha) + '_numpoints_' + str(final_num_points) + '_drag_' + str(c_drag), final_points)
+np.save('fp_' + dataset + '_alpha_' + str(alpha) + '_numpoints_' + str(final_num_points) + '_drag_' + str(c_drag), final_positions)
 
 

@@ -4,9 +4,9 @@ final_num_points = 22000
 alpha = 1.0
 max_time = 90.0
 min_time = 5.0
-num_iterations = 400
+num_iterations = 200
 boundary = 50
-c_drag = 30.0
+c_drag = 20.0
 num_cores = 32
 gamma = 0.5
 dataset = 'kaza'
@@ -345,7 +345,7 @@ for k in range(num_iterations):
     curr_points = final_positions
     map_points = new_map_points
     
-    np.save('fp_' + dataset + '_alpha_' + str(alpha) + '_numpoints_' + str(final_num_points) + '_drag_' + str(c_drag) + '_iter_' + str(k), curr_points)
+    np.save('iter_pos/fp_' + dataset + '_alpha_' + str(alpha) + '_numpoints_' + str(final_num_points) + '_drag_' + str(c_drag) + '_iter_' + str(k), curr_points)
     
     if total_dist/num_particles < 0.5:
         break

@@ -139,6 +139,8 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud['values'] = scalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
 
+    arrows.save('arrows.vtk')
+
     filename = "viz_3d_denoised.mp4"
     pv.set_plot_theme("document")
     plotter = pv.Plotter()
@@ -203,4 +205,4 @@ if dataset == 'mouse':
     theta_files = [theta_path]
 
 visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=1,
-                 spacing_xy=50, spacing_z=1, radius_scale=0.2, height_scale=3.0, colormap=my_colormap, neg_retardance=False, denoise=False)
+                 spacing_xy=100, spacing_z=1, radius_scale=0.4, height_scale=3.0, colormap=my_colormap, neg_retardance=False, denoise=False)

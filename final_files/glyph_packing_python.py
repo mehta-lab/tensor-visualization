@@ -1,12 +1,12 @@
 # Parameters
-initial_num_points = 30000
-final_num_points = 22000
-alpha = 1.0
+initial_num_points = 35000
+final_num_points = 27000
+alpha = 3
 max_time = 90.0
 min_time = 5.0
 num_iterations = 200
 boundary = 50
-c_drag = 20.0
+c_drag = 10.0
 num_cores = 32
 gamma = 0.5
 dataset = 'kaza'

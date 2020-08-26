@@ -1,10 +1,10 @@
-for ite in range(100):
+for ite in range(181):
     # Parameters
-    alpha = 1.7
+    alpha = 2.0
     dataset = 'kaza'
     pos_folder = 'iter_pos/'
     pos_results = 'iter_result/'
-    positions_file = 'fp_kaza_alpha_1.0_numpoints_22000_drag_20.0' + '_iter_' + str(ite) + '.npy'
+    positions_file = 'fp_kaza_alpha_3_numpoints_27000_drag_10.0' + '_iter_' + str(ite) + '.npy'
     import cv2
     from matplotlib.patches import Ellipse
     import matplotlib.pyplot as plt

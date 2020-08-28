@@ -1,10 +1,10 @@
-for ite in range(181):
+for ite in range(275):
     # Parameters
-    alpha = 2.0
-    dataset = 'kaza'
-    pos_folder = 'iter_pos/'
-    pos_results = 'iter_result/'
-    positions_file = 'fp_kaza_alpha_3_numpoints_27000_drag_10.0' + '_iter_' + str(ite) + '.npy'
+    alpha = 1.5
+    dataset = 'u2'
+    pos_folder = 'iter_pos_1/'
+    pos_results = 'iter_result_1/'
+    positions_file = 'fp_u2_alpha_1_numpoints_40000_drag_10.0' + '_iter_' + str(ite) + '.npy'
     import cv2
     from matplotlib.patches import Ellipse
     import matplotlib.pyplot as plt
@@ -25,6 +25,7 @@ for ite in range(181):
         orientation = rescale(orientation, 0.5, anti_aliasing=True)
         anisotropy = anisotropy / 65535*10
         orientation = orientation / 18000*np.pi
+        anisotropy = np.ones_like(anisotropy) + 1
         USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
         VSmooth = VSmooth*-1
         orientation = np.arctan2(VSmooth, USmooth)
@@ -48,7 +49,7 @@ for ite in range(181):
         orientation_list.append(orientation[p[0], p[1]])
         anisotropy_value = anisotropy[p[0], p[1]]
 
-        if abs(anisotropy_value) < 0.5:
+        if abs(anisotropy_value) < 0.8:
             major_axis_len.append(1*0.01)
             minor_axis_len.append(abs(anisotropy_value)*0.01)
         else:

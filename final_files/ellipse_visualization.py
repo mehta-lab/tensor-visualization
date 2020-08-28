@@ -1,8 +1,8 @@
 # Parameters
-alpha = 1.7
-dataset = 'kaza'
+alpha = 2
+dataset = 'u2'
 pos_folder = 'results/'
-positions_file = 'fp_kaza_alpha_1.0_numpoints_22000_drag_20.0.npy'
+positions_file = 'fp_u2_alpha_2_numpoints_40000_drag_5.0.npy'
 import cv2
 from matplotlib.patches import Ellipse
 import matplotlib.pyplot as plt
@@ -23,6 +23,7 @@ if dataset == 'u2':
     orientation = rescale(orientation, 0.5, anti_aliasing=True)
     anisotropy = anisotropy / 65535*10
     orientation = orientation / 18000*np.pi
+    anisotropy = np.ones_like(anisotropy) + 1
     USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
     VSmooth = VSmooth*-1
     orientation = np.arctan2(VSmooth, USmooth)
@@ -46,7 +47,7 @@ for p in within_boundary_pos:
     orientation_list.append(orientation[p[0], p[1]])
     anisotropy_value = anisotropy[p[0], p[1]]
 
-    if abs(anisotropy_value) < 1:
+    if abs(anisotropy_value) < 1.6:
         major_axis_len.append(1*0.01)
         minor_axis_len.append(abs(anisotropy_value)*0.01)
     else:

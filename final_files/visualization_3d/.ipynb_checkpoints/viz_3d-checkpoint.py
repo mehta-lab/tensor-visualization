@@ -13,7 +13,7 @@ from orientation_to_rgb import orientation_3D_to_rgb
 import time
 from numpy import linalg as LA
 
-dataset = 'mouse'
+dataset = 'kaza'
 
 # Generate colormap
 spaces_th = 139
@@ -60,6 +60,8 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     theta = np.transpose(np.array(theta),(1,2,0))/18000*np.pi
     
     anisotropy= anisotropy_scale*np.abs(ret)
+    
+    anisotropy[anisotropy < 0.2] = 0
 
     f_1c = anisotropy*linelength*(np.sin(theta)**2)*np.cos(2*azimuth)
     f_1s = anisotropy*linelength*(np.sin(theta)**2)*np.sin(2*azimuth)
@@ -139,19 +141,21 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     point_cloud['values'] = scalars
     arrows = point_cloud.glyph(orient='vectors', scale=True, factor=5, geom=pv.Cylinder(radius=radius_scale, height=height_scale, resolution=200))
 
-    filename = "viz_3d_denoised_2.mp4"
+    filename = "viz_3d_denoised.mp4"
     pv.set_plot_theme("document")
     plotter = pv.Plotter()
     plotter.open_movie(filename)
     plotter.add_mesh(arrows, scalars='values', cmap=my_colormap)
 
-    cpos = [(41914.98405034885, 45261.74263508663, 33163.87155659542),
-            (8751.112493753433, 12097.871078491211, 0.0),
-            (0.0, 0.0, 1.0)]
+#     cpos = [(41914.98405034885, 45261.74263508663, 33163.87155659542),
+#             (8751.112493753433, 12097.871078491211, 0.0),
+#             (0.0, 0.0, 1.0)]
     #cpos = [(598.635899228783, 618.3063588568882, 496.33323602172896),
     #        (139.62683308124542, 159.2972927093506, 37.324169874191284),
     #        (0.0, 0.0, 1.0)]
     #plotter.camera_position = cpos
+    plotter.enable_anti_aliasing()
+    plotter.enable_depth_peeling(number_of_peels=4)
     plotter.show(auto_close=False)
     #plotter.write_frame()
 
@@ -185,9 +189,12 @@ def visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoi
     plotter.close()
 
 if dataset == 'kaza':
-    ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/retardance3D/*'
-    azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/azimuth/*'
-    theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/theta/*'
+#     ret_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/retardance3D/*'
+#     azimuth_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/azimuth/*'
+#     theta_path = '/mnt/comp_micro/Projects/visualization/dataset/3D_orientation_data/20200223_63x_3D_Old_Kazansky_Target/theta/*'
+    ret_path = '3d_dataset/retardance3D/*'
+    azimuth_path = '3d_dataset/azimuth/*'
+    theta_path = '3d_dataset/theta/*'
 
     ret_files = sorted(glob.glob(ret_path))
     azimuth_files = sorted(glob.glob(azimuth_path))
@@ -202,5 +209,5 @@ if dataset == 'mouse':
     azimuth_files = [azimuth_path]
     theta_files = [theta_path]
 
-visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(30, 30, 10), anisotropy_scale=0.3, z_stack=1,
-                 spacing_xy=500, spacing_z=1, radius_scale=0.5, height_scale=8.0, colormap=my_colormap, neg_retardance=False, denoise=False)
+visualization_3d(ret_files, azimuth_files, theta_files, linelength=20, denoise_weight=5, filter_size=(6, 6, 3), anisotropy_scale=0.3, z_stack=96,
+                 spacing_xy=6, spacing_z=3, radius_scale=0.05, height_scale=0.7, colormap=my_colormap, neg_retardance=False, denoise=False)

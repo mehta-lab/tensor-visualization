@@ -1,3 +1,9 @@
+ini_thresh = 0.5
+fin_thresh = 1
+num_iter = 181
+slope = (fin_thresh - ini_thresh)/(num_iter - 1)
+constant = (num_iter*ini_thresh - fin_thresh)/(num_iter - 1) 
+
 for ite in range(181):
     # Parameters
     alpha = 2.0
@@ -12,6 +18,8 @@ for ite in range(181):
     import matplotlib.cm as cmx
     import numpy as np
     from skimage.transform import rescale
+    
+    thresh = slope*(ite + 1) + constant
 
     anisotropy = cv2.imread('2d_data/' + dataset + '/retardance.tif', -1).astype('float32')
     orientation = cv2.imread('2d_data/' + dataset + '/azimuth.tif', -1).astype('float32')
@@ -48,7 +56,7 @@ for ite in range(181):
         orientation_list.append(orientation[p[0], p[1]])
         anisotropy_value = anisotropy[p[0], p[1]]
 
-        if abs(anisotropy_value) < 0.5:
+        if abs(anisotropy_value) < thresh:
             major_axis_len.append(1*0.01)
             minor_axis_len.append(abs(anisotropy_value)*0.01)
         else:

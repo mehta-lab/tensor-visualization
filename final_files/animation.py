@@ -6,11 +6,11 @@ constant = (num_iter*ini_thresh - fin_thresh)/(num_iter - 1)
 
 for ite in range(181):
     # Parameters
-    alpha = 2.0
-    dataset = 'kaza'
-    pos_folder = 'iter_pos/'
-    pos_results = 'iter_result/'
-    positions_file = 'fp_kaza_alpha_3_numpoints_27000_drag_10.0' + '_iter_' + str(ite) + '.npy'
+    alpha = 1.5
+    dataset = 'u2'
+    pos_folder = 'iter_pos_1/'
+    pos_results = 'iter_result_1/'
+    positions_file = 'fp_u2_alpha_1_numpoints_40000_drag_10.0' + '_iter_' + str(ite) + '.npy'
     import cv2
     from matplotlib.patches import Ellipse
     import matplotlib.pyplot as plt
@@ -33,6 +33,7 @@ for ite in range(181):
         orientation = rescale(orientation, 0.5, anti_aliasing=True)
         anisotropy = anisotropy / 65535*10
         orientation = orientation / 18000*np.pi
+        anisotropy = np.ones_like(anisotropy) + 1
         USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
         VSmooth = VSmooth*-1
         orientation = np.arctan2(VSmooth, USmooth)

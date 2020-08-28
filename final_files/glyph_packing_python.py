@@ -1,15 +1,15 @@
 # Parameters
-initial_num_points = 35000
-final_num_points = 27000
-alpha = 3
-max_time = 90.0
+initial_num_points = 50000
+final_num_points = 40000
+alpha = 2
+max_time = 300.0
 min_time = 5.0
-num_iterations = 200
+num_iterations = 300
 boundary = 50
-c_drag = 10.0
-num_cores = 32
+c_drag = 5.0
+num_cores = 16
 gamma = 0.5
-dataset = 'kaza'
+dataset = 'u2'
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,6 +55,7 @@ if dataset == 'u2':
     orientation = rescale(orientation, 0.5, anti_aliasing=True)
     anisotropy = anisotropy / 65535*10
     orientation = orientation / 18000*np.pi
+    anisotropy = np.ones_like(anisotropy) + 1
     USmooth, VSmooth = anisotropy*np.cos(orientation), anisotropy*np.sin(orientation)
     VSmooth = VSmooth*-1
     orientation = np.arctan2(VSmooth, USmooth)
